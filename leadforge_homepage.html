@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LeadForge — Find Businesses That Need You</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0d0d12;
+    --ink-muted: #52526a;
+    --ink-faint: #9898b0;
+    --bg: #ffffff;
+    --surface: #f6f6fb;
+    --surface2: #ededf6;
+    --accent: #4f3ef7;
+    --accent-light: #ece9ff;
+    --accent-dark: #3120d6;
+    --green: #14b87a;
+    --green-light: #e3f9f1;
+    --amber: #f59e0b;
+    --amber-light: #fef3c7;
+    --border: #e2e2ef;
+    --radius: 12px;
+    --radius-lg: 20px;
+    --nav-h: 68px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    height: var(--nav-h);
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center;
+    padding: 0 5vw;
+    gap: 2rem;
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.35rem;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: -0.5px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .nav-logo span {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--accent); color: #fff; font-size: 1rem;
+  }
+  .nav-links {
+    display: flex; gap: 1.75rem; margin-left: 2rem; list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.875rem; font-weight: 500;
+    color: var(--ink-muted); text-decoration: none;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+  .btn-ghost {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem; font-weight: 500;
+    padding: 8px 18px; border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: transparent; color: var(--ink-muted);
+    cursor: pointer; text-decoration: none;
+    transition: border-color .2s, color .2s;
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-primary {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem; font-weight: 600;
+    padding: 9px 22px; border-radius: 8px;
+    border: none; background: var(--accent); color: #fff;
+    cursor: pointer; text-decoration: none;
+    transition: background .2s, transform .15s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 90px 5vw 80px;
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4rem; align-items: center;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 0.78rem; font-weight: 600; letter-spacing: .04em;
+    text-transform: uppercase;
+    background: var(--accent-light); color: var(--accent);
+    padding: 5px 14px; border-radius: 999px;
+    margin-bottom: 1.25rem;
+  }
+  .hero-badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse 1.8s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    font-weight: 800; line-height: 1.08;
+    letter-spacing: -1.5px; color: var(--ink);
+    margin-bottom: 1.25rem;
+  }
+  h1 em { font-style: normal; color: var(--accent); }
+  .hero-sub {
+    font-size: 1.05rem; color: var(--ink-muted);
+    max-width: 460px; margin-bottom: 2rem; line-height: 1.7;
+  }
+  .hero-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .btn-hero {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem; font-weight: 600;
+    padding: 14px 32px; border-radius: 10px;
+    border: none; background: var(--accent); color: #fff;
+    cursor: pointer; text-decoration: none;
+    transition: background .2s, transform .15s;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-hero:hover { background: var(--accent-dark); transform: translateY(-2px); }
+  .btn-hero-outline {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem; font-weight: 500;
+    padding: 14px 28px; border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: transparent; color: var(--ink-muted);
+    cursor: pointer; text-decoration: none;
+    transition: border-color .2s, color .2s;
+  }
+  .btn-hero-outline:hover { border-color: var(--accent); color: var(--accent); }
+  .hero-stats {
+    display: flex; gap: 2rem; margin-top: 2.5rem;
+    padding-top: 2rem; border-top: 1px solid var(--border);
+  }
+  .stat-item { display: flex; flex-direction: column; gap: 2px; }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem; font-weight: 700; color: var(--ink);
+    letter-spacing: -1px;
+  }
+  .stat-label { font-size: 0.8rem; color: var(--ink-faint); }
+
+  /* ── HERO CARD ── */
+  .hero-visual { position: relative; }
+  .lead-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: 0 8px 40px rgba(79,62,247,.08), 0 1px 4px rgba(0,0,0,.06);
+  }
+  .lead-card-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+  .lead-badge {
+    font-size: 0.72rem; font-weight: 600; padding: 3px 10px;
+    border-radius: 999px;
+  }
+  .badge-niche { background: var(--accent-light); color: var(--accent); }
+  .badge-new { background: var(--green-light); color: #0a7a50; }
+  .lead-name {
+    font-family: 'Syne', sans-serif; font-size: 1.05rem;
+    font-weight: 700; margin-bottom: 3px;
+  }
+  .lead-city { font-size: 0.82rem; color: var(--ink-muted); }
+  .lead-meta {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    margin: 1rem 0; padding: 1rem;
+    background: var(--surface); border-radius: var(--radius);
+  }
+  .meta-row { display: flex; flex-direction: column; gap: 2px; }
+  .meta-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-faint); }
+  .meta-val { font-size: 0.9rem; font-weight: 500; color: var(--ink); }
+  .stars { color: var(--amber); font-size: 0.85rem; }
+  .lock-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px; background: var(--surface);
+    border-radius: var(--radius); border: 1px dashed var(--border);
+    margin-bottom: 12px;
+  }
+  .lock-text { font-size: 0.82rem; color: var(--ink-muted); display: flex; align-items: center; gap: 6px; }
+  .lock-icon { font-size: 1rem; }
+  .btn-unlock {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem; font-weight: 600;
+    padding: 7px 16px; border-radius: 7px;
+    border: none; background: var(--accent); color: #fff;
+    cursor: pointer;
+  }
+  .card-floating {
+    position: absolute;
+    background: #fff; border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 10px 14px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.08);
+    font-size: 0.78rem;
+  }
+  .card-floating.top-right { top: -18px; right: -20px; }
+  .card-floating.bot-left { bottom: -18px; left: -20px; }
+  .float-green { display: flex; align-items: center; gap: 6px; color: #0a7a50; font-weight: 600; }
+  .float-counter { font-weight: 700; font-size: 1rem; color: var(--ink); }
+
+  /* ── SECTION BASE ── */
+  section { padding: 90px 5vw; }
+  .section-inner { max-width: 1140px; margin: 0 auto; }
+  .section-label {
+    font-size: 0.78rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .1em; color: var(--accent); margin-bottom: .6rem;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-weight: 800; line-height: 1.1;
+    letter-spacing: -1px; color: var(--ink); margin-bottom: 1rem;
+  }
+  .section-sub {
+    font-size: 1rem; color: var(--ink-muted); max-width: 540px; line-height: 1.7;
+  }
+
+  /* ── FEATURES ── */
+  #features { background: var(--surface); }
+  .features-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem; margin-top: 3.5rem;
+  }
+  .feature-card {
+    background: #fff; border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 1.75rem;
+    transition: box-shadow .2s, transform .2s;
+  }
+  .feature-card:hover { box-shadow: 0 8px 32px rgba(79,62,247,.1); transform: translateY(-3px); }
+  .feature-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; margin-bottom: 1.2rem;
+  }
+  .feature-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: .5rem; }
+  .feature-desc { font-size: 0.875rem; color: var(--ink-muted); line-height: 1.7; }
+
+  /* ── HOW IT WORKS ── */
+  #how {
+    background: var(--ink);
+    color: #fff;
+  }
+  #how .section-label { color: #a08fff; }
+  #how .section-title { color: #fff; }
+  #how .section-sub { color: rgba(255,255,255,.55); }
+  .steps-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem; margin-top: 3.5rem; position: relative;
+  }
+  .steps-grid::before {
+    content: '';
+    position: absolute; top: 28px; left: 60px; right: 60px; height: 1px;
+    background: linear-gradient(90deg, transparent, #4f3ef7 20%, #4f3ef7 80%, transparent);
+    opacity: .35;
+  }
+  .step-card {
+    text-align: center; padding: 2rem 1.25rem;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: var(--radius-lg);
+    position: relative;
+  }
+  .step-num {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800;
+    margin: 0 auto 1.25rem; position: relative; z-index: 1;
+  }
+  .step-title { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: .5rem; }
+  .step-desc { font-size: 0.825rem; color: rgba(255,255,255,.5); line-height: 1.7; }
+
+  /* ── PRICING ── */
+  #pricing { background: var(--bg); }
+  .pricing-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem; margin-top: 3.5rem;
+  }
+  .price-card {
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-lg); padding: 2rem 1.5rem;
+    display: flex; flex-direction: column; gap: .75rem;
+    background: #fff; transition: box-shadow .2s;
+  }
+  .price-card:hover { box-shadow: 0 8px 32px rgba(79,62,247,.1); }
+  .price-card.popular {
+    border-color: var(--accent);
+    position: relative;
+  }
+  .popular-badge {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--accent); color: #fff;
+    font-size: 0.7rem; font-weight: 700; padding: 4px 14px;
+    border-radius: 999px; white-space: nowrap;
+  }
+  .plan-name { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--ink-muted); }
+  .plan-credits { font-size: 0.8rem; color: var(--ink-faint); }
+  .plan-price {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.2rem; font-weight: 800; color: var(--ink);
+    letter-spacing: -1.5px; line-height: 1;
+  }
+  .plan-price sup { font-size: 1rem; vertical-align: top; margin-top: 6px; display: inline-block; }
+  .plan-ppl { font-size: 0.78rem; color: var(--ink-faint); }
+  .plan-divider { border: none; border-top: 1px solid var(--border); margin: .25rem 0; }
+  .plan-features { list-style: none; display: flex; flex-direction: column; gap: .6rem; flex: 1; }
+  .plan-features li {
+    font-size: 0.825rem; color: var(--ink-muted);
+    display: flex; align-items: center; gap: 7px;
+  }
+  .plan-features li::before { content: '✓'; color: var(--green); font-weight: 700; }
+  .btn-plan {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem; font-weight: 600;
+    padding: 11px 20px; border-radius: 9px;
+    border: 1.5px solid var(--border);
+    background: transparent; color: var(--ink);
+    cursor: pointer; text-align: center;
+    transition: background .2s, color .2s, border-color .2s;
+    text-decoration: none; display: block;
+  }
+  .btn-plan:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-plan.accent {
+    background: var(--accent); color: #fff; border-color: var(--accent);
+  }
+  .btn-plan.accent:hover { background: var(--accent-dark); }
+
+  /* ── FAQ ── */
+  #faq { background: var(--surface); }
+  .faq-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1rem; margin-top: 3.5rem; max-width: 900px;
+  }
+  .faq-item {
+    background: #fff; border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.5rem;
+    cursor: pointer; transition: box-shadow .2s;
+  }
+  .faq-item:hover { box-shadow: 0 4px 20px rgba(0,0,0,.06); }
+  .faq-q {
+    font-family: 'Syne', sans-serif; font-size: 0.9rem;
+    font-weight: 700; color: var(--ink); margin-bottom: .6rem;
+    display: flex; justify-content: space-between; gap: 10px;
+  }
+  .faq-a { font-size: 0.85rem; color: var(--ink-muted); line-height: 1.7; }
+
+  /* ── CTA BANNER ── */
+  .cta-section {
+    padding: 90px 5vw;
+    background: var(--accent);
+    text-align: center;
+  }
+  .cta-section h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800; color: #fff;
+    letter-spacing: -1.5px; margin-bottom: 1rem;
+  }
+  .cta-section p { font-size: 1.05rem; color: rgba(255,255,255,.75); margin-bottom: 2.5rem; }
+  .btn-cta-white {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem; font-weight: 700;
+    padding: 15px 36px; border-radius: 10px;
+    border: none; background: #fff; color: var(--accent);
+    cursor: pointer; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .btn-cta-white:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,.15); }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 40px 5vw;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.825rem; color: var(--ink-faint);
+  }
+
+  /* ── LIVE COUNTER ANIMATION ── */
+  @keyframes countUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+  .count-anim { animation: countUp .6s ease both; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <span>⚡</span>
+    LeadForge
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a class="btn-ghost" href="#login">Log in</a>
+    <a class="btn-primary" href="#signup">Get started →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Live • <span id="live-count">184,732</span> leads available
+    </div>
+    <h1>Find businesses<br>that <em>need you</em><br>right now</h1>
+    <p class="hero-sub">
+      LeadForge surfaces local businesses with a Google profile but <strong>no website</strong> — the warmest leads on earth. Unlock contact details one at a time. Pay only for what you want.
+    </p>
+    <div class="hero-actions">
+      <a class="btn-hero" href="#signup">Browse free leads →</a>
+      <a class="btn-hero-outline" href="#how">See how it works</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num">60M+</span>
+        <span class="stat-label">No-website businesses</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">81%</span>
+        <span class="stat-label">Gross margin per lead</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">$0.79</span>
+        <span class="stat-label">Per lead from $79</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="card-floating top-right">
+      <div class="float-green">✓ Lead verified today</div>
+    </div>
+
+    <div class="lead-card">
+      <div class="lead-card-header">
+        <div>
+          <div class="lead-name">Sunset Plumbing Co.</div>
+          <div class="lead-city">📍 Austin, Texas</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-direction:column;align-items:flex-end;">
+          <span class="lead-badge badge-niche">Plumber</span>
+          <span class="lead-badge badge-new">New</span>
+        </div>
+      </div>
+
+      <div class="lead-meta">
+        <div class="meta-row">
+          <span class="meta-label">Rating</span>
+          <span class="meta-val"><span class="stars">★★★★★</span> 4.8</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Reviews</span>
+          <span class="meta-val">127 reviews</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Website</span>
+          <span class="meta-val" style="color:#d85a30">❌ None found</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">GMB Status</span>
+          <span class="meta-val" style="color:#14b87a">✓ Verified</span>
+        </div>
+      </div>
+
+      <div class="lock-row">
+        <div class="lock-text">
+          <span class="lock-icon">🔒</span>
+          Phone &amp; email hidden — 1 credit to unlock
+        </div>
+        <button class="btn-unlock">Unlock</button>
+      </div>
+
+      <div style="font-size:.75rem; color:var(--ink-faint); text-align:center;">
+        Free preview • Pay only to unlock contact details
+      </div>
+    </div>
+
+    <div class="card-floating bot-left">
+      <span class="float-counter">1,420</span>
+      <span style="font-size:.75rem;color:var(--ink-muted);margin-left:4px">plumbers in Texas available</span>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-inner">
+    <div class="section-label">Why LeadForge</div>
+    <div class="section-title">Everything a freelancer<br>needs to close more deals</div>
+    <div class="section-sub">Stop wasting hours on cold prospecting. LeadForge puts pre-verified, ready-to-pitch leads in front of you — filtered exactly the way you want.</div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#ece9ff;">🎯</div>
+        <div class="feature-title">GMB no-website filter</div>
+        <div class="feature-desc">Every lead has a live Google Business Profile but zero website — the strongest buying signal for a web freelancer. Pre-verified before you ever see it.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#e3f9f1;">🔍</div>
+        <div class="feature-title">Powerful search filters</div>
+        <div class="feature-desc">Filter by country, city, niche, minimum star rating, and review count. See free preview cards — name, category, rating — before spending a single credit.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#fef3c7;">⚡</div>
+        <div class="feature-title">Instant contact unlock</div>
+        <div class="feature-desc">Spend 1 credit and instantly see full address, phone, email, social links, opening hours, and GMB photo count. No waiting, no approval queues.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#ece9ff;">📋</div>
+        <div class="feature-title">Built-in mini CRM</div>
+        <div class="feature-desc">Mark leads as Cold → Contacted → Replied → Closed. Your unlocked leads are saved forever. Export any list as a CSV in one click.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#e3f9f1;">🔄</div>
+        <div class="feature-title">Auto-refund guarantee</div>
+        <div class="feature-desc">If a lead's phone and email both fail within 14 days, your credit is automatically refunded — no questions asked, within 60 seconds.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#fef3c7;">📡</div>
+        <div class="feature-title">Saved search alerts</div>
+        <div class="feature-desc">Save your best filter combo and get an email the moment new matching leads are added. Never miss a fresh plumber in your city again.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-inner">
+    <div class="section-label">How it works</div>
+    <div class="section-title">From signup to first<br>conversation in minutes</div>
+    <div class="section-sub">No long onboarding. No subscription commitment. Just browse, filter, unlock, and pitch.</div>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-title">Sign up free</div>
+        <div class="step-desc">Create an account with email or Google OAuth. Get 3 free preview unlocks immediately — no card required.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-title">Set your filters</div>
+        <div class="step-desc">Choose country, city, niche, minimum rating, and review count. Browse thousands of matching leads with free preview cards.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-title">Buy credits</div>
+        <div class="step-desc">Purchase a credit pack from $19. Credits never expire if you top up within 12 months. Pay only for leads you actually want.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-title">Unlock &amp; pitch</div>
+        <div class="step-desc">Spend 1 credit to reveal full contact details. Save to My Leads, track status, export CSV, and close the deal.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-inner">
+    <div class="section-label">Pricing</div>
+    <div class="section-title">Simple credit packs,<br>no subscriptions</div>
+    <div class="section-sub">Buy exactly what you need. Scale up when you're ready. Credits roll over as long as you stay active.</div>
+
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="plan-name">Starter</div>
+        <div class="plan-credits">20 credits</div>
+        <div class="plan-price"><sup>$</sup>19</div>
+        <div class="plan-ppl">$0.95 per lead</div>
+        <hr class="plan-divider"/>
+        <ul class="plan-features">
+          <li>20 lead unlocks</li>
+          <li>All filters included</li>
+          <li>CSV export</li>
+          <li>Auto-refund guarantee</li>
+          <li>My Leads dashboard</li>
+        </ul>
+        <a class="btn-plan" href="#signup">Get started</a>
+      </div>
+
+      <div class="price-card popular">
+        <div class="popular-badge">Most popular</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-credits">105 credits (100 + 5 free)</div>
+        <div class="plan-price"><sup>$</sup>79</div>
+        <div class="plan-ppl">$0.79 per lead</div>
+        <hr class="plan-divider"/>
+        <ul class="plan-features">
+          <li>105 lead unlocks</li>
+          <li>5 bonus credits</li>
+          <li>All filters included</li>
+          <li>CSV export</li>
+          <li>Saved search alerts</li>
+        </ul>
+        <a class="btn-plan accent" href="#signup">Get Pro →</a>
+      </div>
+
+      <div class="price-card">
+        <div class="plan-name">Agency</div>
+        <div class="plan-credits">550 credits (500 + 50 free)</div>
+        <div class="plan-price"><sup>$</sup>299</div>
+        <div class="plan-ppl">$0.60 per lead</div>
+        <hr class="plan-divider"/>
+        <ul class="plan-features">
+          <li>550 lead unlocks</li>
+          <li>50 bonus credits</li>
+          <li>Bulk CSV export</li>
+          <li>Priority support</li>
+          <li>Team credit sharing</li>
+        </ul>
+        <a class="btn-plan" href="#signup">Get Agency</a>
+      </div>
+
+      <div class="price-card">
+        <div class="plan-name">Scale</div>
+        <div class="plan-credits">2,200 credits (2K + 200 free)</div>
+        <div class="plan-price"><sup>$</sup>899</div>
+        <div class="plan-ppl">$0.45 per lead</div>
+        <hr class="plan-divider"/>
+        <ul class="plan-features">
+          <li>2,200 lead unlocks</li>
+          <li>Full API access</li>
+          <li>200 bonus credits</li>
+          <li>Priority support</li>
+          <li>Custom integrations</li>
+        </ul>
+        <a class="btn-plan" href="#signup">Get Scale</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="section-inner">
+    <div class="section-label">FAQ</div>
+    <div class="section-title">Common questions</div>
+
+    <div class="faq-grid">
+      <div class="faq-item">
+        <div class="faq-q">What exactly is a lead? <span>↓</span></div>
+        <div class="faq-a">Each lead is a real local business with a verified Google Business Profile but no linked website — meaning they have digital intent and a visible need for your services.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">How fresh is the data? <span>↓</span></div>
+        <div class="faq-a">Every lead is re-verified every 90 days. If a business adds a website, we remove it from inventory and auto-refund any unlock within 14 days. You always see the last verified date.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What if the contact info is wrong? <span>↓</span></div>
+        <div class="faq-a">Click "Report bad lead." If both the phone and email fail our automated check, you get 1 credit back within 60 seconds. No forms, no waiting, no arguments.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Do credits expire? <span>↓</span></div>
+        <div class="faq-a">Credits last 12 months from purchase, and they reset if you buy any new pack within that window — so active users effectively never lose credits.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Can I share leads with my team? <span>↓</span></div>
+        <div class="faq-a">Agency and Scale plans include team credit sharing. Multiple users can share one wallet and see each other's unlocked leads inside the dashboard.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Is there an API? <span>↓</span></div>
+        <div class="faq-a">Yes — Scale plan includes metered API access. Great for agencies or website builders who want to programmatically query and unlock leads at volume.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-section" id="signup">
+  <h2>Your next client is already on Google.<br>They just need a website.</h2>
+  <p>Join thousands of freelancers who fill their pipeline with LeadForge — not cold DMs.</p>
+  <a class="btn-cta-white" href="#signup">Start for free → browse 3 leads now</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>© 2026 LeadForge · <a href="#" style="color:inherit">Privacy</a> · <a href="#" style="color:inherit">Terms</a> · <a href="#" style="color:inherit">Remove my listing</a></div>
+  <div>Built for web freelancers, by web freelancers.</div>
+</footer>
+
+<script>
+  // Animate the live lead counter
+  const target = 184732;
+  let current = 184600;
+  const el = document.getElementById('live-count');
+  function tick() {
+    if (current < target) {
+      current += Math.ceil(Math.random() * 3);
+      if (current > target) current = target;
+      el.textContent = current.toLocaleString();
+      setTimeout(tick, 80);
+    }
+  }
+  setTimeout(tick, 1200);
+
+  // Smooth unlock button demo
+  document.querySelector('.btn-unlock').addEventListener('click', function() {
+    this.textContent = '✓ Unlocked!';
+    this.style.background = '#14b87a';
+    setTimeout(() => {
+      this.textContent = 'Unlock';
+      this.style.background = '';
+    }, 2000);
+  });
+</script>
+</body>
+</html>
